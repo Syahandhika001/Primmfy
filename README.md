@@ -75,7 +75,6 @@ Frontend will run on: `http://localhost:3000`
 
 - [Frontend Documentation](./Frontend/README.md)
 - [Backend Documentation](./Backend/README.md)
-- [API Documentation](./Backend/docs/API.md) _(if exists)_
 
 ---
 
@@ -149,8 +148,8 @@ JWT_SECRET=your_secret_key
 
 ## 👨‍💻 Team
 
-- **Developer:** [Your Name]
-- **University:** [Your University]
+- **Developer:** Syahandhika Naufal Farizi
+- **University:** Universitas Pendidikan Indonesia
 - **Project Type:** Final Year Project / Thesis
 
 ---
