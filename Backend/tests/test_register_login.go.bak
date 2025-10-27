@@ -1,0 +1,147 @@
+package main
+
+import (
+    "fmt"
+    "log"
+
+    "github.com/joho/godotenv"
+    "primmfy_db/models"
+    "primmfy_db/services"
+)
+
+func main() {
+    // Load .env
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatal("❌ Error loading .env file:", err)
+    }
+
+    // Connect to database
+    InitDB()
+    defer CloseDB()
+
+    fmt.Println("🧪 Testing Register & Login...")
+    fmt.Println("═══════════════════════════════════════")
+
+    // Test 1: Register User Baru (Student)
+    fmt.Println("\n📝 Test 1: Register Student Baru...")
+    registerReq := models.RegisterRequest{
+        Username: "testuser",
+        Email:    "test@example.com",
+        Password: "password123",
+        FullName: "Test User",
+        Role:     "student",
+    }
+
+    user, err := services.RegisterUser(DB, registerReq)
+    if err != nil {
+        fmt.Printf("❌ Error registering user: %s\n", err)
+        // Jika error karena email sudah ada, skip test ini
+        if err.Error() == "email atau username sudah digunakan" {
+            fmt.Println("⚠️  User sudah ada, skip ke test login...")
+        } else {
+            return
+        }
+    } else {
+        fmt.Println("✅ User berhasil didaftarkan!")
+        fmt.Printf("   ID: %d\n", user.ID)
+        fmt.Printf("   Username: %s\n", user.Username)
+        fmt.Printf("   Email: %s\n", user.Email)
+        fmt.Printf("   Role: %s\n", user.Role)
+        fmt.Printf("   Coins: %d\n", user.TotalCoins)
+        fmt.Printf("   Level: %d\n", user.Level)
+    }
+
+    // Test 2: Register dengan Email yang Sama (Harus Error)
+    fmt.Println("\n📝 Test 2: Register dengan Email yang Sama (Harus Error)...")
+    _, err = services.RegisterUser(DB, registerReq)
+    if err != nil {
+        fmt.Printf("✅ Error yang diharapkan: %s\n", err)
+    } else {
+        fmt.Println("❌ Seharusnya error karena email duplikat!")
+    }
+
+    // Test 3: Register Teacher
+    fmt.Println("\n📝 Test 3: Register Teacher Baru...")
+    teacherReq := models.RegisterRequest{
+        Username: "teacherjohn",
+        Email:    "john.teacher@school.com",
+        Password: "password123",
+        FullName: "John Teacher",
+        Role:     "teacher",
+    }
+
+    teacher, err := services.RegisterUser(DB, teacherReq)
+    if err != nil {
+        fmt.Printf("⚠️  Error: %s\n", err)
+        if err.Error() == "email atau username sudah digunakan" {
+            fmt.Println("   Teacher sudah ada, skip...")
+        }
+    } else {
+        fmt.Println("✅ Teacher berhasil didaftarkan!")
+        fmt.Printf("   Username: %s\n", teacher.Username)
+        fmt.Printf("   Role: %s\n", teacher.Role)
+    }
+
+    // Test 4: Login dengan Credentials yang Benar
+    fmt.Println("\n📝 Test 4: Login dengan Credentials yang Benar...")
+    loginReq := models.LoginRequest{
+        Email:    "test@example.com",
+        Password: "password123",
+    }
+
+    loggedUser, err := services.LoginUser(DB, loginReq)
+    if err != nil {
+        fmt.Printf("❌ Login error: %s\n", err)
+        return
+    }
+
+    fmt.Println("✅ Login berhasil!")
+    fmt.Printf("   ID: %d\n", loggedUser.ID)
+    fmt.Printf("   Username: %s\n", loggedUser.Username)
+    fmt.Printf("   Email: %s\n", loggedUser.Email)
+    fmt.Printf("   Role: %s\n", loggedUser.Role)
+
+    // Test 5: Generate JWT Token untuk User yang Login
+    fmt.Println("\n📝 Test 5: Generate JWT Token...")
+    token, err := services.GenerateJWT(loggedUser.ID, loggedUser.Role)
+    if err != nil {
+        fmt.Printf("❌ Error generating token: %s\n", err)
+        return
+    }
+
+    fmt.Println("✅ JWT Token berhasil dibuat!")
+    fmt.Printf("   Token: %s...\n", token[:50])
+    fmt.Printf("   Length: %d characters\n", len(token))
+
+    // Test 6: Login dengan Password Salah
+    fmt.Println("\n📝 Test 6: Login dengan Password Salah (Harus Error)...")
+    wrongLoginReq := models.LoginRequest{
+        Email:    "test@example.com",
+        Password: "wrongpassword",
+    }
+
+    _, err = services.LoginUser(DB, wrongLoginReq)
+    if err != nil {
+        fmt.Printf("✅ Error yang diharapkan: %s\n", err)
+    } else {
+        fmt.Println("❌ Seharusnya error karena password salah!")
+    }
+
+    // Test 7: Login dengan Email yang Tidak Ada
+    fmt.Println("\n📝 Test 7: Login dengan Email yang Tidak Ada (Harus Error)...")
+    notExistReq := models.LoginRequest{
+        Email:    "notexist@example.com",
+        Password: "password123",
+    }
+
+    _, err = services.LoginUser(DB, notExistReq)
+    if err != nil {
+        fmt.Printf("✅ Error yang diharapkan: %s\n", err)
+    } else {
+        fmt.Println("❌ Seharusnya error karena email tidak ada!")
+    }
+
+    fmt.Println("\n═══════════════════════════════════════")
+    fmt.Println("✅ All register & login tests completed!")
+}

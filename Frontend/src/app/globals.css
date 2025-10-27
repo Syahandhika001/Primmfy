@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    /* Brand Colors */
+    --brand-blue: 194 226 250;
+    --brand-lavender: 183 163 227;
+    --brand-pink: 255 143 143;
+    --brand-cream: 255 241 203;
+
+    /* Base Colors */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --primary: 194 226 250;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 183 163 227;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 255 241 203;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 255 143 143;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 194 226 250;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 194 226 250;
+    --primary-foreground: 222 47% 11%;
+
+    --secondary: 183 163 227;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 255 241 203;
+    --accent-foreground: 222 47% 11%;
+
+    --destructive: 255 143 143;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 194 226 250;
+  }
+}
+
+/* Custom utilities */
+.gradient-primary {
+  background: linear-gradient(135deg, rgb(var(--brand-blue)) 0%, #E5F3FD 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, rgb(var(--brand-lavender)) 0%, #E0D7F4 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, rgb(var(--brand-pink)) 0%, #FFB8B8 100%);
+}

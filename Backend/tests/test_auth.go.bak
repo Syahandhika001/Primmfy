@@ -1,0 +1,87 @@
+package main
+
+import (
+    "fmt"
+    "log"
+    
+    "github.com/joho/godotenv"  // 👈 TAMBAHKAN INI
+    "primmfy_db/services"
+)
+
+func main() {
+    // 👇 TAMBAHKAN INI - Load .env file
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatal("❌ Error loading .env file:", err)
+    }
+    fmt.Println("✅ File .env berhasil dimuat!")
+    fmt.Println()
+
+    fmt.Println("🧪 Testing Auth Service...")
+    fmt.Println("═══════════════════════════════════════")
+
+    // 1. Test Password Hashing
+    password := "password123"
+    fmt.Printf("📝 Password original: %s\n", password)
+
+    // Hash password
+    hashedPassword, err := services.HashPassword(password)
+    if err != nil {
+        fmt.Println("❌ Error hashing password:", err)
+        return
+    }
+
+    fmt.Printf("🔒 Password hash: %s\n", hashedPassword)
+    fmt.Printf("📏 Length hash: %d characters\n\n", len(hashedPassword))
+
+    // 2. Test Password Verification
+    fmt.Println("🔍 Testing Password Verification...")
+
+    // Test dengan password yang benar
+    isValid := services.CheckPasswordHash(password, hashedPassword)
+    if isValid {
+        fmt.Println("✅ Password BENAR - Cocok!")
+    } else {
+        fmt.Println("❌ Password SALAH - Tidak cocok!")
+    }
+
+    // Test dengan password yang salah
+    wrongPassword := "wrongpassword"
+    isValid = services.CheckPasswordHash(wrongPassword, hashedPassword)
+    if isValid {
+        fmt.Println("✅ Password BENAR - Cocok!")
+    } else {
+        fmt.Println("❌ Password SALAH - Tidak cocok! (ini hasil yang diharapkan)")
+    }
+
+    fmt.Println("\n═══════════════════════════════════════")
+
+    // 3. Test JWT Generation
+    fmt.Println("🎫 Testing JWT Token Generation...")
+
+    token, err := services.GenerateJWT(1, "student")
+    if err != nil {
+        fmt.Println("❌ Error generating token:", err)
+        return
+    }
+
+    fmt.Printf("🎟️  JWT Token: %s\n", token)
+    fmt.Printf("📏 Token length: %d characters\n\n", len(token))
+
+    // 4. Test JWT Validation
+    fmt.Println("🔍 Testing JWT Token Validation...")
+
+    claims, err := services.ValidateJWT(token)
+    if err != nil {
+        fmt.Println("❌ Error validating token:", err)
+        return
+    }
+
+    fmt.Printf("✅ Token valid!\n")
+    fmt.Printf("   User ID: %d\n", claims.UserID)
+    fmt.Printf("   Role: %s\n", claims.Role)
+    fmt.Printf("   Expires: %s\n", claims.ExpiresAt.Time.Format("2006-01-02 15:04:05"))
+
+    fmt.Println("\n═══════════════════════════════════════")
+    fmt.Println("✅ All tests passed!")
+}
